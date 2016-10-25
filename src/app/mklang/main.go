@@ -5,116 +5,53 @@ import (
 	"golang.org/x/text/language"
 )
 
-var (
-	tags = []language.Tag{
-		language.English,
-		language.Afrikaans,
-		language.Amharic,
-		language.Arabic,
-		language.ModernStandardArabic,
-		language.Azerbaijani,
-		language.Bulgarian,
-		language.Bengali,
-		language.Catalan,
-		language.Czech,
-		language.Danish,
-		language.German,
-		language.Greek,
-		language.AmericanEnglish,
-		language.BritishEnglish,
-		language.Spanish,
-		language.EuropeanSpanish,
-		language.LatinAmericanSpanish,
-		language.Estonian,
-		language.Persian,
-		language.Finnish,
-		language.Filipino,
-		language.French,
-		language.CanadianFrench,
-		language.Gujarati,
-		language.Hebrew,
-		language.Hindi,
-		language.Croatian,
-		language.Hungarian,
-		language.Armenian,
-		language.Indonesian,
-		language.Icelandic,
-		language.Italian,
-		language.Japanese,
-		language.Georgian,
-		language.Kazakh,
-		language.Khmer,
-		language.Kannada,
-		language.Korean,
-		language.Kirghiz,
-		language.Lao,
-		language.Lithuanian,
-		language.Latvian,
-		language.Macedonian,
-		language.Malayalam,
-		language.Mongolian,
-		language.Marathi,
-		language.Malay,
-		language.Burmese,
-		language.Nepali,
-		language.Dutch,
-		language.Norwegian,
-		language.Punjabi,
-		language.Polish,
-		language.Portuguese,
-		language.BrazilianPortuguese,
-		language.EuropeanPortuguese,
-		language.Romanian,
-		language.Russian,
-		language.Sinhala,
-		language.Slovak,
-		language.Slovenian,
-		language.Albanian,
-		language.Serbian,
-		language.SerbianLatin,
-		language.Swedish,
-		language.Swahili,
-		language.Tamil,
-		language.Telugu,
-		language.Thai,
-		language.Turkish,
-		language.Ukrainian,
-		language.Urdu,
-		language.Uzbek,
-		language.Vietnamese,
-		language.Chinese,
-		language.SimplifiedChinese,
-		language.TraditionalChinese,
-		language.Zulu,
-	}
-)
-
 func main() {
-	fmt.Println("begin")
+	t, err := language.Parse("ja-JP")
+	if err != nil {
+		fmt.Println("err:", err)
+	}
+	fmt.Println(t)
+	tags := []language.Tag{
+		language.Make("en-US"),
+		language.Make("zh-CN"),
+		language.Make("ko-KR"),
+		language.Make("ja-JP"),
+	}
 	m := language.NewMatcher(tags)
-	fmt.Println(m.Match(language.Make("zh-testfasdf")))
-	fmt.Println(m.Match(language.Make("zh-cn")))
-	fmt.Println(m.Match(language.Make("zh_cn")))
-	fmt.Println(m.Match(language.Make("zh_cn")))
-	fmt.Println(m.Match(language.Make("zh_cn")))
-	fmt.Println(m.Match(language.Make("zh_cn")))
-	fmt.Println(m.Match(language.Make("en_us")))
-	fmt.Println(m.Match(language.Make("en_cn")))
-	fmt.Println(m.Match(language.Make("en_au")))
-	fmt.Println(m.Match(language.Make("en_au")))
-	fmt.Println(m.Match(language.Make("en_en")))
-	fmt.Println(m.Match(language.Make("zh-tw")))
-	fmt.Println(m.Match(language.Make("cmn")))
-	fmt.Println(m.Match(language.Make("en-latn-ng")))
-	fmt.Println(m.Match(language.Make("zh_hans")))
-	fmt.Println(m.Match(language.Make("zh_hant")))
-	fmt.Println(m.Match(language.Make("zh_tw")))
-	fmt.Println(m.Match(language.Make("zh_hk")))
+	for {
+		fmt.Println("input language string:")
+		lang := ""
+		fmt.Scanln(&lang)
+		fmt.Println(m.Match(language.Make(lang)))
+	}
+	/*
+		fmt.Println("begin match en-US")
+		fmt.Println(m.Match(language.Make("")))
+		fmt.Println(m.Match(language.Make("en_US")))
+		fmt.Println(m.Match(language.Make("en")))
+		fmt.Println(m.Match(language.Make("en_cn")))
+		fmt.Println(m.Match(language.Make("en-cn")))
+		fmt.Println(m.Match(language.Make("en_uk")))
+		fmt.Println(m.Match(language.Make("en-cc")))
+		fmt.Println("begin match ja-JP")
+		fmt.Println(m.Match(language.Make("ja-JP")))
+		fmt.Println(m.Match(language.Make("ja")))
+		fmt.Println(m.Match(language.Make("ja_JP")))
+		fmt.Println(m.Match(language.Make("ja-cc")))
+		fmt.Println("begin match zh-CN")
+		fmt.Println(m.Match(language.Make("zh")))
+		fmt.Println(m.Match(language.Make("zh-cc")))
+		fmt.Println(m.Match(language.Make("zh_cn")))
+		fmt.Println(m.Match(language.Make("zh-us")))
+		fmt.Println("begin match ko-KR")
+		fmt.Println(m.Match(language.Make("ko")))
+		fmt.Println(m.Match(language.Make("ko-cc")))
+		fmt.Println(m.Match(language.Make("ko_cn")))
+		fmt.Println(m.Match(language.Make("ko-KR")))
 
-	fmt.Println("begin print tags")
-	/*	for _, tmp := range tags {
-			fmt.Println(tmp.String())
-		}
-		fmt.Println("end print tags")
+		/*	for _, tmp := range tags {
+				fmt.Println(tmp.String())
+			}
+			fmt.Println("end print tags")
 	*/
 }
