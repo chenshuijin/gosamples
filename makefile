@@ -28,4 +28,5 @@ test:
 clean:
 	rm -rf $(CURDIR)/bin/
 goget:
-	HTTPS_PROXY=proxy.p1staff.com:1337 go get -u -v golang.org/x/text/language
+	go get -u -v golang.org/x/text/language
+	go get -u -v gopkg.in/pg.v3

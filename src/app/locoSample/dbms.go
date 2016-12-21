@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
-	"gopkg.in/pg.v4"
+//	"fmt"
+//	"gopkg.in/pg.v3"
 )
 
 var (
@@ -14,13 +14,15 @@ type PredefineMessage struct {
 }
 
 func GetPredefineMessages() []PredefineMessage {
-	db := pg.Connect(pgDbConf)
-	defer db.Close()
-	var messages []PredefineMessage
-	_, err := db.Query(&messages, predefinemessage_select)
-	if err != nil {
-		fmt.Println("db query err:", err)
-	}
-	//	fmt.Println("messages:", messages)
-	return messages
+	/*	db := pg.Connect(pgDbConf)
+		defer db.Close()
+		var messages []PredefineMessage
+		_, err := db.Query(&messages, predefinemessage_select)
+		if err != nil {
+			fmt.Println("db query err:", err)
+		}
+		//	fmt.Println("messages:", messages)
+		return messages
+	*/
+	return nil
 }
