@@ -1,13 +1,14 @@
 package main
 
 import (
-	"bcd"
-	"config"
+	"flag"
 	"fmt"
 )
 
+var p = flag.String("p", "a flag sample", "only a sample")
+
 func main() {
 	fmt.Println("flag sample")
-	config.Parse("config parse")
-	fmt.Println(bcd.Get())
+	flag.Parse()
+	fmt.Println("flag is p is:", *p)
 }

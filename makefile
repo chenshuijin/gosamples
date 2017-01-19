@@ -24,7 +24,6 @@ app:
 	go install app/...
 test:
 	go test -v app/...
-	go test -v bcd
 clean:
 	rm -rf $(CURDIR)/bin/
 goget:
