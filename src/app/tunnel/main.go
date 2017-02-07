@@ -13,6 +13,15 @@ var remoteHost = flag.String("remote", "127.0.0.1:7050", "the remote host")
 func main() {
 	fmt.Println("ok")
 	flag.Parse()
+	gs, err := New("tcp", *localHost, *remoteHost)
+	if err != nil {
+		log.Fatal("new listener err:", err)
+	}
+	gs.Start()
+	log.Println("stop")
+}
+
+func startSvr() {
 	addr, err := net.ResolveTCPAddr("tcp", *localHost)
 	if err != nil {
 		panic(err)
@@ -27,12 +36,11 @@ func main() {
 		conn, err := ln.Accept()
 		if err != nil {
 			log.Fatal("get client connection error: ", err)
+			continue
 		}
 		go handleConnection(conn)
 	}
-
 }
-
 func handleConnection(conn net.Conn) {
 	defer conn.Close()
 	addr, err := net.ResolveTCPAddr("tcp", *remoteHost)
