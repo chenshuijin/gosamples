@@ -18,6 +18,7 @@ func main() {
 	start := time.Now()
 	fullPath, _ := filepath.Abs(*dir)
 	allFiles := ReadDir(fullPath)
+	//allFiles = filepath.Glob(fullPath)
 	allLines := 0
 	for _, v := range allFiles {
 		num := CountFile(v)
