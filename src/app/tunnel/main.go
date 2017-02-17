@@ -5,20 +5,25 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"time"
 )
 
-var localHost = flag.String("local", ":8080", "the local listen host")
-var remoteHost = flag.String("remote", "127.0.0.1:7050", "the remote host")
+var localHost = flag.String("local", ":8081", "the local listen host")
+var remoteHost = flag.String("remote", "127.0.0.1:8080", "the remote host")
 
 func main() {
 	fmt.Println("ok")
 	flag.Parse()
+	startSvr()
+	log.Println("stop")
+}
+
+func startGraceSvr() {
 	gs, err := New("tcp", *localHost, *remoteHost)
 	if err != nil {
 		log.Fatal("new listener err:", err)
 	}
 	gs.Start()
-	log.Println("stop")
 }
 
 func startSvr() {
@@ -31,6 +36,8 @@ func startSvr() {
 	if err != nil {
 		panic(err)
 	}
+	squeue = NewSafeQueue()
+	sqChan = make(chan interface{}, 100)
 
 	for {
 		conn, err := ln.Accept()
@@ -41,51 +48,66 @@ func startSvr() {
 		go handleConnection(conn)
 	}
 }
+
+type Tunnel struct {
+	From *net.Conn
+	To   *net.Conn
+	Data []byte
+}
+
+var TimeOut time.Time
+var squeue *SafeQueue
+var sqChan chan interface{}
+
 func handleConnection(conn net.Conn) {
-	defer conn.Close()
-	addr, err := net.ResolveTCPAddr("tcp", *remoteHost)
-	if err != nil {
-		fmt.Println("err:", err)
-		return
-	}
-	remoteConn, err := net.DialTCP("tcp", nil, addr)
+	remoteConn, err := net.Dial("tcp", *remoteHost)
 	if err != nil {
 		fmt.Println("err:", err)
 	}
-	defer remoteConn.Close()
+	go Read2Queue(conn, remoteConn)
+	go Read2Queue(remoteConn, conn)
+	go WriteFromQueue()
+
+	return
+}
+
+func Read2Queue(from, to net.Conn) {
+	defer from.Close()
+	defer to.Close()
+	from.SetDeadline(TimeOut)
+	to.SetDeadline(TimeOut)
 
 	for {
 		data := make([]byte, 2048)
-		count, err := conn.Read(data)
+		count, err := from.Read(data)
 		if err != nil {
 			fmt.Println("err:", err)
 			return
 		}
 		log.Println("recv count:", count)
-		log.Printf("recv data:\n%s\n", data)
-		count, err = remoteConn.Write(data)
-		if err != nil {
-			fmt.Println("err:", err)
-			return
-		}
-
-		log.Println("send count:", count)
-
-		count, err = remoteConn.Read(data)
-		if err != nil {
-			fmt.Println("err:", err)
-			return
-		}
-		log.Println("read from remote count:", count)
-		log.Printf("read from remote data:\n%s\n", data)
-		count, err = conn.Write(data)
-		if err != nil {
-			fmt.Println("err:", err)
-			return
-		}
-		log.Println("write to local count:", count)
-		log.Printf("write to local data:\n%s\n", data)
+		squeue.Push(&Tunnel{
+			From: &from,
+			To:   &to,
+			Data: data[:count],
+		})
+		sqChan <- 1
+		log.Println("read2queue sqchan")
 	}
-	//	fmt.Fprintf(conn, "OK\n")
-	return
+}
+
+func WriteFromQueue() {
+	for {
+		select {
+		case t := <-sqChan:
+			log.Println("<- from sqchain:", t)
+			tmp := squeue.Pop().(*Tunnel)
+			count, err := (*tmp.To).Write(tmp.Data)
+			if err != nil {
+				log.Println("err:", err)
+				(*tmp.To).Close()
+				(*tmp.From).Close()
+			}
+			log.Println("write count:", count)
+		}
+	}
 }
