@@ -34,3 +34,7 @@ log
 *github.com*
 *golang.org*
 *gopkg.in*
+
+# go pprof
+*.profile
+*.test
