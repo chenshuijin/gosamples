@@ -6,72 +6,47 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 )
 
 var dir = flag.String("d", "./", "The path of the code folder")
-var fileTypes = []string{".go", ".jave", ".c"}
+var fileTypes = []string{".go", ".java", ".c", ".js", ".cpp", ".h"}
+var reg = regexp.MustCompile(`[*.go|*.java|*.c|*.js|*.cpp|*.h]$`)
 
 func main() {
 	flag.Parse()
 	start := time.Now()
-	fullPath, _ := filepath.Abs(*dir)
-	allFiles := ReadDir(fullPath)
-	//allFiles = filepath.Glob(fullPath)
+	fullPath, err := filepath.Abs(*dir)
+	if err != nil {
+		panic(err)
+	}
+	argPath := flag.Arg(flag.NArg() - 1)
+	if fullPath, err = filepath.Abs(argPath); err != nil && argPath != "" {
+		panic(err)
+	}
+	fmt.Println("path:", fullPath)
+	allFiles := []string{}
+	err = filepath.Walk(fullPath, func(path string, info os.FileInfo, err error) error {
+		if !info.IsDir() && reg.MatchString(path) {
+			allFiles = append(allFiles, path)
+		}
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
+
 	allLines := 0
 	for _, v := range allFiles {
 		num := CountFile(v)
 		allLines += num
-
 	}
 	end := time.Now()
-	fmt.Println("all lines:", allLines)
+	fmt.Println("lines amount:", allLines)
+	fmt.Println("files amount:", len(allFiles))
 	fmt.Printf("cost time:%v\n", end.Sub(start))
-}
-
-func ReadDir(fullPath string) []string {
-	fi, err := os.Stat(fullPath)
-	if err != nil {
-		panic(err)
-	}
-
-	if !fi.IsDir() {
-		return []string{fullPath}
-	}
-
-	dirList, err := ioutil.ReadDir(fullPath)
-	if err != nil {
-
-		panic(err)
-	}
-	files := []string{}
-	for _, v := range dirList {
-		if v.Name() == "./" || v.Name() == "../" {
-			continue
-		}
-		pathSep := string(os.PathSeparator)
-		filepath := fullPath + pathSep + v.Name()
-
-		_, err := os.Stat(filepath)
-		if err != nil {
-			panic(err)
-		}
-
-		if v.IsDir() {
-			for _, f := range ReadDir(filepath) {
-				files = append(files, f)
-			}
-		} else {
-			for _, t := range fileTypes {
-				if strings.HasSuffix(filepath, t) {
-					files = append(files, filepath)
-					break
-				}
-			}
-		}
-	}
-	return files
 }
 
 func CountFile(fullPath string) int {
