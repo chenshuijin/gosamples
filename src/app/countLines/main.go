@@ -8,10 +8,13 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"time"
 )
 
 var dir = flag.String("d", "./", "The path of the code folder")
+var isAsync = flag.Bool("a", false, "Is count multi-routine")
 var fileTypes = []string{".go", ".java", ".c", ".js", ".cpp", ".h"}
 var reg = regexp.MustCompile(`[*.go|*.java|*.c|*.js|*.cpp|*.h]$`)
 
@@ -37,16 +40,43 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-
-	allLines := 0
-	for _, v := range allFiles {
-		num := CountFile(v)
-		allLines += num
+	allLines := uint64(0)
+	if *isAsync {
+		fmt.Println("count async...")
+		allLines = AsyncCount(allFiles)
+	} else {
+		fmt.Println("count sync...")
+		allLines = SyncCount(allFiles)
 	}
+
 	end := time.Now()
 	fmt.Println("lines amount:", allLines)
 	fmt.Println("files amount:", len(allFiles))
 	fmt.Printf("cost time:%v\n", end.Sub(start))
+}
+
+func SyncCount(allFiles []string) uint64 {
+	allLines := uint64(0)
+	for _, v := range allFiles {
+		num := CountFile(v)
+		allLines += uint64(num)
+	}
+	return allLines
+}
+
+func AsyncCount(allFiles []string) uint64 {
+	wg := sync.WaitGroup{}
+	allLines := uint64(0)
+	for _, v := range allFiles {
+		wg.Add(1)
+		go func(v string) {
+			num := CountFile(v)
+			atomic.AddUint64(&allLines, uint64(num))
+			wg.Done()
+		}(v)
+	}
+	wg.Wait()
+	return allLines
 }
 
 func CountFile(fullPath string) int {
@@ -55,7 +85,6 @@ func CountFile(fullPath string) int {
 		panic(err)
 	}
 	defer fi.Close()
-
 	data, err := ioutil.ReadAll(fi)
 	if err != nil {
 		panic(err)
