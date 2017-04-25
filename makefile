@@ -18,6 +18,7 @@ endif
 export GOPATH=$(CURDIR)
 
 all: clean test app
+quick: app
 
 app:
 	go fmt app/...
