@@ -31,6 +31,13 @@ func main() {
 	fmt.Printf("doc:%s\n", doc)
 	fmt.Println("revision:", revision)
 	fmt.Println("err:", err)
+
+	key = constructCompositeKey("sany-cc", "ustomer:kankan|110101199902310023")
+	results, err := db.QueryDocuments(`{"selector":{"orgId":"kankan"}}`)
+	if err != nil {
+		fmt.Println("err4:", err)
+	}
+	fmt.Println("results:", results)
 }
 
 func constructCompositeKey(ns, key string) []byte {
