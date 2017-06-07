@@ -14,13 +14,14 @@ else
 		IS_MAC_OS_X:=true
 	endif
 endif
-
-export GOPATH=$(CURDIR)
+OLD_GOPATH:=$(GOPATH)
+export GOPATH=$(CURDIR):$(OLD_GOPATH)
 
 all: clean test app
 quick: app
 
 app:
+	echo $(GOPATH)
 	go fmt app/...
 	go install app/...
 test:
