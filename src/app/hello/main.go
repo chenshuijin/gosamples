@@ -8,6 +8,7 @@ func main() {
 	fmt.Println("hello world")
 	SampleArgs1([]string{"h", "d", "daf", "sdf", "2", "afd", "defg"})
 	SampleArgs2("h", "d", "daf", "sdf", "2", "afd", "defg")
+	fmt.Println("1e3:", 1e3)
 }
 
 func SampleArgs1(args []string) {
