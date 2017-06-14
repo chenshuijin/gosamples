@@ -25,10 +25,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	argPath := flag.Arg(flag.NArg() - 1)
-	if fullPath, err = filepath.Abs(argPath); err != nil && argPath != "" {
-		panic(err)
-	}
+
 	fmt.Println("path:", fullPath)
 	allFiles := []string{}
 	err = filepath.Walk(fullPath, func(path string, info os.FileInfo, err error) error {
