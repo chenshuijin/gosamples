@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"runtime"
 	"time"
 )
 
@@ -14,7 +15,17 @@ var remoteHost = flag.String("remote", "127.0.0.1:8080", "the remote host")
 func main() {
 	fmt.Println("ok")
 	flag.Parse()
-	startSvr()
+	switch runtime.GOOS {
+	case "windows":
+		log.Println("start a normal tunnel")
+		startSvr()
+	case "darwin":
+		fallthrough
+	default:
+		log.Println("start a gracefull tunnel")
+		startGraceSvr()
+	}
+
 	log.Println("stop")
 }
 
