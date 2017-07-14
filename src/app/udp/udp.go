@@ -29,14 +29,14 @@ func ListenUDP(priv *ecdsa.PrivateKey, laddr string) (*udp, error) {
 
 func (u *udp) readLoop() {
 	defer u.conn.Close()
-	buf := make([]byte, 1280)
+	buf := make([]byte, 4096)
 	for {
 		nbytes, from, err := u.conn.ReadFromUDP(buf)
 		if err != nil {
 			panic(err)
 		} else {
 			log.Printf("recv %d bytes from [%s].\n", nbytes, from)
-			MsgChan <- buf
+			MsgChan <- buf[:nbytes]
 		}
 	}
 }
