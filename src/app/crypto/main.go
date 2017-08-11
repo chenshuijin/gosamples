@@ -5,12 +5,15 @@ import (
 	"crypto/rsa"
 	"crypto/sha256"
 	"fmt"
+
+	"golang.org/x/crypto/ed25519"
 )
 
 func main() {
 	fmt.Println("crypto")
-	sha256Sample()
-	rsaSample()
+	//	sha256Sample()
+	//	rsaSample()
+	ed25519Sample()
 }
 
 func sha256Sample() {
@@ -31,4 +34,22 @@ func rsaSample() {
 	}
 	fmt.Printf("private key:[%x]\n", pri)
 	fmt.Printf("public key:[%x]\n", pri.Public())
+}
+
+func ed25519Sample() {
+	fmt.Println("ed25519 sample")
+	signData := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTVUWXYZ0123456789"
+
+	pub, pri, err := ed25519.GenerateKey(rand.Reader)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	fmt.Println("pub length:", len(pub))
+	fmt.Println("pri length:", len(pri))
+	fmt.Printf("pub key:%v\n", pub)
+	fmt.Printf("pri key:%v\n", pri)
+	fmt.Printf("sign [%s]\n", signData)
+	sig := ed25519.Sign(pri, []byte(signData))
+	fmt.Println("sign result:", sig)
+	fmt.Println("verify result:", ed25519.Verify(pub, []byte(signData), sig))
 }
