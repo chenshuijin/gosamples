@@ -9,7 +9,7 @@ import (
 
 func udpSvr(ctx *cli.Context) error {
 	log.Println("udp svr...")
-	log.Println("loacl:", ctx.GlobalString("local"))
+	log.Println("loacl:", ctx.String(LocalFlag.Name))
 	nodekey, err := crypto.GenerateKey()
 	if err != nil {
 		log.Fatal("could not generate key:%v", err)
@@ -19,7 +19,7 @@ func udpSvr(ctx *cli.Context) error {
 		log.Fatal("%v", err)
 		return err
 	}
-	u, err := ListenUDP(nodekey, ctx.GlobalString("local"))
+	u, err := ListenUDP(nodekey, ctx.String(LocalFlag.Name))
 	go u.readLoop()
 	for {
 		select {

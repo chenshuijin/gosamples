@@ -26,13 +26,16 @@ AUTHOR{{with $length := len .Authors}}{{if ne 1 $length}}S{{end}}{{end}}:
 
 COMMANDS:{{range .VisibleCategories}}{{if .Name}}
    {{.Name}}:{{end}}{{range .VisibleCommands}}
-     {{join .Names ", "}}{{"\t"}}{{.Usage}}{{end}}{{end}}{{end}}{{if .VisibleFlags}}
-
-{{range .VisibleCommands}}
+     {{join .Names ", "}}{{"\t"}}{{.Usage}}{{end}}{{end}}{{end}}
+{{range .VisibleCommands}}{{if .VisibleFlags}}{{if .Name}}
 {{.Name}} OPTIONS:
    {{range $index, $option := .VisibleFlags}}{{if $index}}
-   {{end}}{{$option}}{{end}}{{end}}{{if .Copyright}}
-
+   {{end}}{{$option}}{{end}}{{end}}
+{{end}}{{end}}{{if .VisibleFlags}}
+global OPTIONS:
+   {{range $index, $option := .VisibleFlags}}{{if $index}}
+   {{end}}{{$option}}{{end}}{{end}}
+{{if .Copyright}}
 COPYRIGHT:
    {{.Copyright}}{{end}}
 `
@@ -51,7 +54,7 @@ SUBCOMMANDS:
 var app *cli.App
 
 func init() {
-	cli.CommandHelpTemplate = CommandHelpTemplate
+	//cli.CommandHelpTemplate = CommandHelpTemplate
 	cli.AppHelpTemplate = AppHelpTemplate
 	app = cli.NewApp()
 
@@ -64,11 +67,6 @@ func init() {
 	app.Commands = []cli.Command{
 		udpCliCmd,
 		udpSvrCmd,
-	}
-	app.Flags = []cli.Flag{
-		LocalFlag,
-		UurlFlag,
-		DataFlag,
 	}
 }
 
