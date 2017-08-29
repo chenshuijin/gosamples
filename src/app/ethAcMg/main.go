@@ -13,4 +13,6 @@ func main() {
 	accs := ks.Accounts()
 	log.Println("accs:", accs)
 	ks.NewAccount("")
+	ptks := keystore.NewPlaintextKeyStore("ptkeystore")
+	ptks.NewAccount("")
 }
