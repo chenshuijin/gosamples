@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	"golang.org/x/crypto/ed25519"
+	"golang.org/x/crypto/sha3"
 )
 
 func main() {
@@ -54,4 +55,5 @@ func ed25519Sample() {
 	sig := ed25519.Sign(pri, []byte(signData))
 	fmt.Println("sign result:", sig)
 	fmt.Println("verify result:", ed25519.Verify(pub, []byte(signData), sig))
+	fmt.Printf("%x\n", sha3.Sum256([]byte(signData)))
 }
