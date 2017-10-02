@@ -1,9 +1,9 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -11,17 +11,45 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+
+	cli "gopkg.in/urfave/cli.v1"
 )
 
-var dir = flag.String("d", "./", "The path of the code folder")
-var isAsync = flag.Bool("a", false, "Is count multi-routine")
+var app *cli.App
+
+func init() {
+	//cli.CommandHelpTemplate = CommandHelpTemplate
+	cli.AppHelpTemplate = AppHelpTemplate
+	app = cli.NewApp()
+
+	app.Action = calcCmd
+	app.Name = filepath.Base(os.Args[0])
+	app.Author = "csj"
+	app.Email = "785795635@qq.com"
+	app.Version = "1.0"
+	app.Usage = "the countlines command line interface for calculate code file lines"
+
+}
+
+func main() {
+	if err := app.Run(os.Args); err != nil {
+		log.Fatal("app run err:%v", err)
+	}
+}
+
+func calcCmd(ctx *cli.Context) error {
+	calcLinesInDir(ctx.String(dirFlag.Name), ctx.Bool(isAsyncFlag.Name))
+	return nil
+}
+
+//var dir = flag.String("d", "./", "The path of the code folder")
+//var isAsync = flag.Bool("a", false, "Is count multi-routine")
 var fileTypes = []string{".go", ".java", ".c", ".js", ".cpp", ".h"}
 var reg = regexp.MustCompile(`[*.go|*.java|*.c|*.js|*.cpp|*.h]$`)
 
-func main() {
-	flag.Parse()
+func calcLinesInDir(dir string, isAsync bool) {
 	start := time.Now()
-	fullPath, err := filepath.Abs(*dir)
+	fullPath, err := filepath.Abs(dir)
 	if err != nil {
 		panic(err)
 	}
@@ -38,7 +66,7 @@ func main() {
 		panic(err)
 	}
 	allLines := uint64(0)
-	if *isAsync {
+	if isAsync {
 		fmt.Println("count async...")
 		allLines = AsyncCount(allFiles)
 	} else {
@@ -55,7 +83,7 @@ func main() {
 func SyncCount(allFiles []string) uint64 {
 	allLines := uint64(0)
 	for _, v := range allFiles {
-		num := CountFile(v)
+		num := calcLinesInFile(v)
 		allLines += uint64(num)
 	}
 	return allLines
@@ -67,7 +95,7 @@ func AsyncCount(allFiles []string) uint64 {
 	for _, v := range allFiles {
 		wg.Add(1)
 		go func(v string) {
-			num := CountFile(v)
+			num := calcLinesInFile(v)
 			atomic.AddUint64(&allLines, uint64(num))
 			wg.Done()
 		}(v)
@@ -76,7 +104,7 @@ func AsyncCount(allFiles []string) uint64 {
 	return allLines
 }
 
-func CountFile(fullPath string) int {
+func calcLinesInFile(fullPath string) int {
 	fi, err := os.Open(fullPath)
 	if err != nil {
 		panic(err)
