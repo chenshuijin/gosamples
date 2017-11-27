@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
+	"encoding/base64"
 	"fmt"
 
 	"golang.org/x/crypto/ed25519"
@@ -14,7 +15,8 @@ func main() {
 	fmt.Println("crypto")
 	//	sha256Sample()
 	//	rsaSample()
-	ed25519Sample()
+	//	ed25519Sample()
+	ed25519Exec()
 }
 
 func sha256Sample() {
@@ -56,4 +58,44 @@ func ed25519Sample() {
 	fmt.Println("sign result:", sig)
 	fmt.Println("verify result:", ed25519.Verify(pub, []byte(signData), sig))
 	fmt.Printf("%x\n", sha3.Sum256([]byte(signData)))
+}
+
+func ed25519Exec() {
+	pk := ""
+	sk := ""
+	signature := ""
+	data := ""
+	fmt.Println("input pub")
+	fmt.Scanln(&pk)
+	fmt.Println("input sk")
+	fmt.Scanln(&sk)
+	fmt.Println("input data")
+	fmt.Scanln(&data)
+	fmt.Println("input data:", data)
+	fmt.Println("input signature")
+	fmt.Scanln(&signature)
+	pkbs, err := base64.StdEncoding.DecodeString(pk)
+	if err != nil {
+		fmt.Println("decode pk err:", err)
+	}
+	fmt.Println("decode pk:", pkbs)
+
+	signaturebs, err := base64.StdEncoding.DecodeString(signature)
+	if err != nil {
+		fmt.Println("decode signature err:", err)
+	}
+	fmt.Println("decode signature:", signaturebs)
+	fmt.Println("verify result:", ed25519.Verify(pkbs, []byte(data), signaturebs))
+	for {
+		fmt.Println("input data")
+		fmt.Scanln(&data)
+		fmt.Println("input signature")
+		fmt.Scanln(&signature)
+		signaturebs, err := base64.StdEncoding.DecodeString(signature)
+		if err != nil {
+			fmt.Println("decode signature err:", err)
+		}
+		fmt.Println("decode signature:", signaturebs)
+		fmt.Println("verify result:", ed25519.Verify(pkbs, []byte(data), signaturebs))
+	}
 }
