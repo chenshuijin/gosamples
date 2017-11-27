@@ -41,3 +41,6 @@ log
 # go pprof
 *.profile
 *.test
+
+# mac os
+*.DS_Store
