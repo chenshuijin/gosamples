@@ -1,0 +1,13 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "X6Q8nYb+KXh+64AKHwWOOcyijHQ=",
+			"path": "golang.org/x/crypto/ed25519",
+			"revision": "81e90905daefcd6fd217b62423c0908922eadb30",
+			"revisionTime": "2017-08-25T20:24:07Z"
+		}
+	],
+	"rootPath": "app"
+}
