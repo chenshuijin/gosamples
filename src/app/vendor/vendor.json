@@ -3,6 +3,12 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "F0N5V10ap7J7/rAVRGa7QdmKqlU=",
+			"path": "github.com/gorilla/mux",
+			"revision": "7904d2e42e7ebbdb4a6eb3e57eb201b11df25c57",
+			"revisionTime": "2017-12-04T16:11:14Z"
+		},
+		{
 			"checksumSHA1": "X6Q8nYb+KXh+64AKHwWOOcyijHQ=",
 			"path": "golang.org/x/crypto/ed25519",
 			"revision": "81e90905daefcd6fd217b62423c0908922eadb30",
