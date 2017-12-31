@@ -37,4 +37,16 @@ var (
 		},
 		Description: `get real password of private key`,
 	}
+	unlockAccountCmd = cli.Command{
+		Action:    unlockAccount,
+		Name:      "unlock",
+		Usage:     "unlock eth account",
+		ArgsUsage: "",
+		Category:  "PASSWORD TOOL",
+		Flags: []cli.Flag{
+			PassFlag,
+			KeystoreFlag,
+		},
+		Description: "unlock eth account",
+	}
 )

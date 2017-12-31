@@ -55,6 +55,7 @@ func init() {
 		newEthAccountCmd,
 		listEthAccountsCmd,
 		getPasswordCmd,
+		unlockAccountCmd,
 	}
 }
 
