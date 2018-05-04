@@ -18,3 +18,9 @@ go get -u -v gopkg.in/urfave/cli.v1
 go get -u -v github.com/hyperledger/fabric
 go get -u -v github.com/ethereum/go-ethereum
 go get -u -v github.com/gorilla/mux
+go get -v -u github.com/nsf/gocode
+go get -v -u github.com/rogpeppe/godef
+go get -v -u github.com/bradfitz/goimports
+go get -v -u github.com/kardianos/govendor
+go get -v -u github.com/syndtr/goleveldb/leveldb
+
