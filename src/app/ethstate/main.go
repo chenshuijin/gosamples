@@ -46,29 +46,6 @@ func statedbtest() {
 }
 
 func BlockDb() {
-	db, err := NewLDBDatabase()
-
-	if err != nil {
-		fmt.Println("err:", err)
-	}
-	h := core.GetHeadHeaderHash(db)
-	fmt.Println("h:", h)
-	n := core.GetBlockNumber(db, h)
-	n = 5581000
-	h = common.HexToHash("0x188a5bd86db8a5951e5a202e1f5e5e48fd115d914adc6709bf18a53fc18bf804")
-	fmt.Println("n:", n)
-	b := core.GetBlock(db, h, n)
-	fmt.Println("b.root:", b.Root())
-	ndb := NewDatabase(db)
-	sdb, err := NewStateDb(b.Root(), ndb)
-	if err != nil {
-		fmt.Println("sdb err:", err)
-		return
-	}
-	addr := common.HexToAddress("0x06012c8cf97BEaD5deAe237070F9587f8E7A266d")
-	fmt.Println("addr:", addr)
-	sobj := sdb.GetOrNewStateObject(addr)
-	fmt.Println("sobj:", sobj)
 }
 
 func dbtest() {

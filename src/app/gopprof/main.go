@@ -28,6 +28,9 @@ func main() {
 		case "block":
 			p := pprof.Lookup("block")
 			p.WriteTo(os.Stdout, 2)
+		case "mutex":
+			p := pprof.Lookup("mutex")
+			p.WriteTo(os.Stdout, 2)
 		case "start":
 			if cpuProfile == nil {
 				if f, err := os.Create("game_server.cpuprof"); err != nil {
