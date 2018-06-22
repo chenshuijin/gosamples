@@ -10,16 +10,24 @@ git clone https://github.com/golang/crypto.git src/golang.org/x/crypto
 git clone https://github.com/golang/tools.git src/golang.org/x/tools
 
 go install golang.org/x/text/language
-go get -u -v gopkg.in/pg.v3
-go get -u -v github.com/astaxie/beego
-go get -u -v gopkg.in/yaml.v2
-go get -u -v gopkg.in/alecthomas/kingpin.v2
-go get -u -v gopkg.in/urfave/cli.v1
-go get -u -v github.com/hyperledger/fabric
-go get -u -v github.com/ethereum/go-ethereum
-go get -u -v github.com/gorilla/mux
-go get -v -u github.com/nsf/gocode
-go get -v -u github.com/rogpeppe/godef
-go get -v -u github.com/bradfitz/goimports
-go get -v -u github.com/kardianos/govendor
-go get -v -u github.com/syndtr/goleveldb/leveldb
+
+pkgs=(
+ gopkg.in/pg.v3
+ github.com/astaxie/beego
+ gopkg.in/yaml.v2
+ gopkg.in/alecthomas/kingpin.v2
+ gopkg.in/urfave/cli.v1
+ github.com/hyperledger/fabric
+ github.com/ethereum/go-ethereum
+ github.com/gorilla/mux
+ github.com/nsf/gocode
+ github.com/rogpeppe/godef
+ github.com/bradfitz/goimports
+ github.com/kardianos/govendor
+ github.com/syndtr/goleveldb/leveldb
+ github.com/rs/cors
+)
+
+for pkg in ${pkgs[*]}; do
+    go get -u -v $pkg
+done
