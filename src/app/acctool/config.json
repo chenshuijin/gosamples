@@ -26,5 +26,6 @@
     "enable": true,
     "host": ":8081"
   },
-  "keystore": "/data/loopetha/keystore"
+  "keystore": "/data/loopetha/keystore",
+  "perkeyfilelength": 104857600
 }

@@ -20,5 +20,6 @@ type Config struct {
 		File   string `json:"file"`
 		Format string `json:"format"`
 	}
-	KeyStore string `json:"keystore"`
+	KeyStore         string `json:"keystore"`
+	PerKeyFileLength int64  `json:"perkeyfilelength"`
 }

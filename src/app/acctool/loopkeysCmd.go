@@ -1,11 +1,14 @@
 package main
 
 import (
+	"bytes"
+	"encoding/asn1"
+	"encoding/hex"
 	"io/ioutil"
+	"math/big"
 	"os"
 	"path"
 	"path/filepath"
-	"strconv"
 
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/go-ray/logging"
@@ -17,9 +20,11 @@ func LoopKeys(ctx *cli.Context) error {
 		a, s := newKey()
 		//storeKey2Db(a, s)
 		storeKey2file(a, s)
-		logging.Debugf("a:%+v", a)
-		logging.Debugf("s:%+v", s)
+		logging.Debugf("a:%+v", a.Address)
+		logging.Debugf("s.pub:%+x", s.Public)
+		logging.Debugf("s.priv:%+x", s.Private)
 	}
+	return nil
 }
 
 func newKey() (*EthAccount, *Secp256Key) {
@@ -59,34 +64,49 @@ func storeKey2file(a *EthAccount, s *Secp256Key) {
 	keyfilepath := path.Join(conf.KeyStore, a.Address)
 	keyfilepath, _ = filepath.Abs(keyfilepath)
 
-	d := make([]byte, 120)
-	d[0] = byte(len(a.Address))
-	d = append(d[:], []byte(a.Address)[:]...)
+	addr, err := hex.DecodeString(a.Address[2:])
+	if err != nil {
+		logging.Error("decode address to bytes failed:", err)
+	}
 
-	d[len(d)+1] = byte(len(s.Public))
-	d = append(d[:], s.Public[:]...)
+	k2f := Key2File{
+		Address: addr,
+		Public:  s.Public,
+		Private: s.Private,
+	}
 
-	d[len(d)+1] = byte(len(s.Private))
-	d = append(d[:], s.Private[:]...)
+	bs, err := asn1.Marshal(k2f)
+	if err != nil {
+		logging.Error("asn1 marshal failed:", err)
+	}
+	logging.Debugf("k2f:%+x", bs)
 
-	writeKey2file(d)
+	pad := bytes.Repeat([]byte{0x00}, 128-len(bs))
+	bs = append(bs, pad...)
+	writeKey2file(bs)
 }
 
 func getstorefilepath() string {
 	index := path.Join(conf.KeyStore, "index")
 	index, _ = filepath.Abs(index)
 	currentfilebase := path.Join(conf.KeyStore, "key.")
+	logging.Debug("get index:", getIndex(false))
 	currentfile := currentfilebase + getIndex(false)
-
+	logging.Debug("currentfile:", currentfile)
 	f, err := os.Open(currentfile)
 	if err != nil {
+		logging.Error("open current key file failed:", err)
 		os.Create(currentfile)
 		f, _ = os.Open(currentfile)
 	}
 	defer f.Close()
 
-	finfo, _ := f.Stat()
-	if finfo.Size() > 1024*100 {
+	finfo, e1 := f.Stat()
+	if e1 != nil {
+		logging.Error("get key file stat failed:", e1)
+	}
+	//if finfo.Size() > 1024*1024*100 {
+	if finfo.Size() > conf.PerKeyFileLength {
 		currentfile = currentfilebase + getIndex(true)
 	}
 
@@ -98,30 +118,49 @@ func getIndex(update bool) string {
 	index, _ = filepath.Abs(index)
 	data, e1 := ioutil.ReadFile(index)
 	if e1 != nil {
-		if e1 := ioutil.WriteFile(index, []byte("0"), 0644); e1 != nil {
-			logging.Error("write index failed:", e1)
+		logging.Error("read index file failed:", e1)
+		if e2 := os.Mkdir(conf.KeyStore, os.ModePerm); e2 != nil {
+			logging.Error("mkdir failed:", e2)
 		}
-		return "0"
+		i := big.NewInt(0)
+		if e1 := ioutil.WriteFile(index, i.Bytes(), 0644); e1 != nil {
+			logging.Error("write index failed1 :", e1)
+		}
+		return i.String()
 	} else {
-		i, e2 := strconv.ParseUint(string(data), 10, 64)
-		if e2 != nil {
-			return "0"
-		} else {
-			if update {
-				if e3 := ioutil.WriteFile(index, []byte(string(i+1)), 0644); e3 != nil {
-					logging.Error("write index failed:", e3)
-				}
-				return string(i + 1)
-			} else {
-				return string(i)
+		i := &big.Int{}
+		i = i.SetBytes(data)
+
+		if update {
+			b1 := big.NewInt(1)
+			i = i.Add(i, b1)
+			if e3 := ioutil.WriteFile(index, i.Bytes(), 0644); e3 != nil {
+				logging.Error("write index failed2 :", e3)
 			}
+			return i.String()
+		} else {
+			return i.String()
 		}
 	}
 }
 
 func writeKey2file(data []byte) {
 	cpath := getstorefilepath()
-	if err := ioutil.WriteFile(cpath, data, os.ModeAppend); err != nil {
+	f, err := os.OpenFile(cpath, os.O_APPEND|os.O_WRONLY, 0600)
+	if err != nil {
+		if os.IsNotExist(err) {
+			if e1 := ioutil.WriteFile(cpath, data, 0644); e1 != nil {
+				logging.Error("open key file failed:", err)
+			}
+		} else {
+			logging.Error("open key file failed:", err)
+		}
+		return
+	}
+
+	defer f.Close()
+
+	if _, err = f.Write(data); err != nil {
 		logging.Error("write key to file failed:", err)
 	}
 }

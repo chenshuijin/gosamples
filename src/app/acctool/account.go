@@ -67,3 +67,9 @@ func (s *Secp256Key) Store() error {
 func (s *Secp256Key) Update() error {
 	return DefaultDB().Model(s).Updates(s).Error
 }
+
+type Key2File struct {
+	Address []byte `asn1:"tag:0"`
+	Public  []byte `asn1:"tag:1"`
+	Private []byte `asn1:"tag:2"`
+}
