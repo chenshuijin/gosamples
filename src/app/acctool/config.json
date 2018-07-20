@@ -1,0 +1,31 @@
+{
+  "Log": {
+    "level": "debug",
+    "path": "/data/loopetha/log/",
+    "file": "loopetha",
+    "format": "json"
+  },
+  "dbs": {
+    "mysql": {
+      "drivername": "mysql",
+      "datasource":
+        "exampleuser:exampleuser123@tcp(localhost:3306)/example?charset=utf8&parseTime=True&loc=Local",
+      "maxidleconns": 10,
+      "maxopenconns": 10,
+      "enable": false
+    },
+    "default": {
+      "drivername": "sqlite3",
+      "datasource": "/data/loopetha/data.db",
+      "maxidleconns": 10,
+      "maxopenconns": 10,
+      "enable": true
+    }
+  },
+  "pprof": {
+    "enable": true,
+    "host": ":8081"
+  },
+  "keystore": "/data/loopetha/keystore",
+  "perkeyfilelength": 104857600
+}
