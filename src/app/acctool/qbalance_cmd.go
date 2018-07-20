@@ -9,6 +9,8 @@ import (
 	"os"
 	"path"
 	"strconv"
+	"sync"
+	"sync/atomic"
 
 	"github.com/go-ray/logging"
 	cli "gopkg.in/urfave/cli.v1"
@@ -36,11 +38,19 @@ func queryWithKeyJsonBalance() {
 	}
 }
 
+var w = sync.WaitGroup{}
+
 func queryEthAccBalInStore() {
-	for i := 0; i < 3574; i++ {
-		logging.Error("start key file:", i)
-		p := path.Join(conf.KeyStore, "key."+strconv.Itoa(i))
-		queryEthAccBalInfile(p)
+	i := uint32(0)
+	for ; i < 3574; atomic.AddUint32(&i, uint32(1)) {
+		for j := 0; j < 10; j++ {
+			w.Add(1)
+			k := atomic.AddUint32(&i, uint32(1))
+			p := path.Join(conf.KeyStore, "key."+strconv.Itoa(int(k)))
+			logging.Error("start key file:", k)
+			go queryEthAccBalInfile(p)
+		}
+		w.Wait()
 	}
 }
 
@@ -48,13 +58,20 @@ func queryEthAccBalInfile(p string) {
 	f, err := os.Open(p)
 	if err != nil {
 		logging.Error("open key file failed:", err)
+		return
 	}
 	defer f.Close()
+	defer func() {
+		w.Done()
+	}()
 
 	b := make([]byte, 128)
 	a := &Key2File{}
 	off := int64(0)
 	for {
+		if off%128000 == 0 {
+			logging.Error("off set now is:", off)
+		}
 		_, err = f.ReadAt(b, off)
 		if err != nil {
 			if err == io.EOF {
@@ -156,7 +173,7 @@ func queryBalFromLocal(addr string) string {
 	}
 	rdata, err := Post("http://10.60.81.144:8545", bdata)
 	if err != nil {
-		logging.Error("get balance from local node failed:", err)
+		logging.Errorf("get balance from local node failed, addr[%s]:%v", addr, err)
 		return "0x0"
 	}
 
