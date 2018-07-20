@@ -9,4 +9,10 @@ var (
 		Category:    "Generate Keys",
 		Description: "Loop Generate Keys",
 	}
+	qbalcmd = cli.Command{
+		Action:      qbal,
+		Name:        "qbal",
+		Category:    "Query balance of address",
+		Description: "Query balance of address by call web api",
+	}
 )

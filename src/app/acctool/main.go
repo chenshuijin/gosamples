@@ -26,6 +26,7 @@ func init() {
 	app.Usage = "Secp256Key tool command line interface"
 	app.Commands = []cli.Command{
 		loopKeyscmd,
+		qbalcmd,
 	}
 
 	app.Flags = []cli.Flag{
@@ -40,17 +41,22 @@ func before() cli.BeforeFunc {
 		fmt.Println("config file:", configFile)
 		loadConf(configFile)
 		logging.InitLogger(conf.Log.Path, conf.Log.File, conf.Log.Level, conf.Log.Format)
+		useDb := false
 		for key, dbc := range conf.DBs {
 			logging.Debug("key:", key)
 			logging.Debug("dbc:", dbc)
 			if dbc.Enable {
 				if err := InitDatabaseConfig(key, dbc); err != nil {
 					logging.Error("init database failed:", err)
+				} else {
+					continue
 				}
-
+				useDb = true
 			}
 		}
-		createAllTables()
+		if useDb {
+			createAllTables()
+		}
 		return nil
 	}
 }
