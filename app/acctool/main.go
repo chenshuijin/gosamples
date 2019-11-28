@@ -63,7 +63,7 @@ func before() cli.BeforeFunc {
 
 func main() {
 	if err := app.Run(os.Args); err != nil {
-		logging.Fatal("app run err:%v", err)
+		logging.Fatal("app run err:", err)
 	}
 }
 

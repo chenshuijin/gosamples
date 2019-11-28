@@ -12,11 +12,11 @@ func udpSvr(ctx *cli.Context) error {
 	log.Println("loacl:", ctx.String(LocalFlag.Name))
 	nodekey, err := crypto.GenerateKey()
 	if err != nil {
-		log.Fatal("could not generate key:%v", err)
+		log.Fatal("could not generate key:", err)
 		return err
 	}
 	if err = crypto.SaveECDSA("./nodekey", nodekey); err != nil {
-		log.Fatal("%v", err)
+		log.Fatal(err)
 		return err
 	}
 	u, err := ListenUDP(nodekey, ctx.String(LocalFlag.Name))

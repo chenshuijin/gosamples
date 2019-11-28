@@ -4,10 +4,10 @@ if [ ! -d ./src/golang.org/x ];then
     mkdir -p src/golang.org/x
 fi
 
-git clone https://github.com/golang/text.git src/golang.org/x/text
-git clone https://github.com/golang/net.git src/golang.org/x/net
-git clone https://github.com/golang/crypto.git src/golang.org/x/crypto
-git clone https://github.com/golang/tools.git src/golang.org/x/tools
+git clone https://github.com/golang/text.git $GOPATH/src/golang.org/x/text
+git clone https://github.com/golang/net.git $GOPATH/src/golang.org/x/net
+git clone https://github.com/golang/crypto.git $GOPATH/src/golang.org/x/crypto
+git clone https://github.com/golang/tools.git $GOPATH/src/golang.org/x/tools
 
 go install golang.org/x/text/language
 

@@ -307,7 +307,7 @@ func (couchInstance *CouchInstance) VerifyCouchConfig() (*ConnectionInfo, *DBRet
 		couchInstance.conf.Username, couchInstance.conf.Password, maxRetriesOnStartup)
 
 	if err != nil {
-		log.Println("Unable to connect to CouchDB, check the hostname and port: %s", err.Error())
+		log.Println("Unable to connect to CouchDB, check the hostname and port:", err.Error())
 		return nil, couchDBReturn, fmt.Errorf("Unable to connect to CouchDB, check the hostname and port: %s", err.Error())
 	}
 	defer closeResponseBody(resp)

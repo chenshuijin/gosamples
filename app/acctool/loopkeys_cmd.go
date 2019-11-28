@@ -53,10 +53,10 @@ func newKey() (*EthAccount, *Secp256Key) {
 
 func storeKey2Db(a *EthAccount, s *Secp256Key) {
 	if err := a.Store(); err != nil {
-		logging.Errorf("save account[%+v] to db failed:", a, err)
+		logging.Errorf("save account[%+v] to db failed:%v", a, err)
 	}
 	if err := s.Store(); err != nil {
-		logging.Errorf("save secp256 key [%+v] to db failed:", s, err)
+		logging.Errorf("save secp256 key [%+v] to db failed:%v", s, err)
 	}
 }
 

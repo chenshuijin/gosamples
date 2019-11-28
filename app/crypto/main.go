@@ -36,7 +36,7 @@ func rsaSample() {
 		fmt.Println("error:", err)
 	}
 	if pri.N.BitLen() != keySize {
-		fmt.Printf("key too short wants %s but get %s\n", keySize, pri.N.BitLen())
+		fmt.Printf("key too short wants %d but get %d\n", keySize, pri.N.BitLen())
 	}
 	fmt.Printf("private key:[%x]\n", pri)
 	fmt.Printf("public key:[%x]\n", pri.Public())

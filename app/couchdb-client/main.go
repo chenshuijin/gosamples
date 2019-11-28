@@ -1,9 +1,10 @@
 package main
 
 import (
-	"app/couchdb-client/couchdb"
 	"fmt"
 	"time"
+
+	"gosamples/app/couchdb-client/couchdb"
 )
 
 var compositeKeySep = []byte{0x00}
@@ -28,7 +29,7 @@ func main() {
 	key := constructCompositeKey("sany-cc", "financeleasecontract:0000002")
 	fmt.Printf("key:%s\n", key)
 	doc, revision, err := db.ReadDoc(string(key))
-	fmt.Printf("doc:%s\n", doc)
+	fmt.Printf("doc:%v\n", doc)
 	fmt.Println("revision:", revision)
 	fmt.Println("err:", err)
 

@@ -10,7 +10,7 @@ func TestQueue(t *testing.T) {
 	q.Push(ForTmp{})
 	_, ok := q.Pop().(ForTmp)
 	if !ok {
-		t.Errorf("err while pop from queue:%s", ok)
+		t.Errorf("err while pop from queue:%v", ok)
 	}
 	q.Pop()
 }

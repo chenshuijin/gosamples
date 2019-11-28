@@ -1,31 +1,6 @@
 package main
 
-import (
-	"bytes"
-	"encoding/binary"
-	"encoding/json"
-	"fmt"
-	"log"
-	"math/big"
-	"os"
-
-	"github.com/ethereum/go-ethereum/cmd/utils"
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/consensus"
-	"github.com/ethereum/go-ethereum/core"
-	"github.com/ethereum/go-ethereum/core/state"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/core/vm"
-	"github.com/ethereum/go-ethereum/dashboard"
-	"github.com/ethereum/go-ethereum/eth"
-	"github.com/ethereum/go-ethereum/ethdb"
-	"github.com/ethereum/go-ethereum/node"
-	"github.com/ethereum/go-ethereum/params"
-	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/syndtr/goleveldb/leveldb"
-	cli "gopkg.in/urfave/cli.v1"
-)
-
+/*
 var (
 	app = cli.NewApp()
 )
@@ -257,3 +232,4 @@ func tryimport() {
 	//	addr := common.HexToAddress("0x06012c8cf97BEaD5deAe237070F9587f8E7A266d")
 
 }
+*/

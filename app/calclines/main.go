@@ -33,7 +33,7 @@ func init() {
 
 func main() {
 	if err := app.Run(os.Args); err != nil {
-		log.Fatal("app run err:%v", err)
+		log.Fatal("app run err:", err)
 	}
 }
 

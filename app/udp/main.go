@@ -40,27 +40,42 @@ COPYRIGHT:
    {{.Copyright}}{{end}}
 `
 
+var CommandHelpTemplate = `{{.cmd.Name}}{{if .cmd.Subcommands}} command{{end}}{{if .cmd.Flags}} [command options]{{end}} [arguments...]
+{{if .cmd.Description}}{{.cmd.Description}}
+{{end}}{{if .cmd.Subcommands}}
+SUBCOMMANDS:
+	{{range .cmd.Subcommands}}{{.cmd.Name}}{{with .cmd.ShortName}}, {{.cmd}}{{end}}{{ "\t" }}{{.cmd.Usage}}
+	{{end}}{{end}}{{if .categorizedFlags}}
+{{range $idx, $categorized := .categorizedFlags}}{{$categorized.Name}} OPTIONS:
+{{range $categorized.Flags}}{{"\t"}}{{.}}
+{{end}}
+{{end}}{{end}}`
+
 var app *cli.App
 
 func init() {
+	//cli.CommandHelpTemplate = CommandHelpTemplate
 	cli.AppHelpTemplate = AppHelpTemplate
 	app = cli.NewApp()
 
+	app.Action = udpCmd
 	app.Name = filepath.Base(os.Args[0])
 	app.Author = "csj"
 	app.Email = "785795635@qq.com"
 	app.Version = "1.0"
-	app.Usage = "eth account manage interface"
+	app.Usage = "the udp command line interface"
 	app.Commands = []cli.Command{
-		newEthAccountCmd,
-		listEthAccountsCmd,
-		getPasswordCmd,
-		unlockAccountCmd,
+		udpCliCmd,
+		udpSvrCmd,
 	}
 }
 
 func main() {
 	if err := app.Run(os.Args); err != nil {
-		log.Fatal("app run err:%v", err)
+		log.Fatal("app run err:", err)
 	}
+}
+
+func udpCmd(ctx *cli.Context) error {
+	return nil
 }
