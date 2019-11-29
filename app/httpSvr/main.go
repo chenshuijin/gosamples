@@ -34,7 +34,7 @@ func muxSample() {
 func defaultSample() {
 	log.Println("defaultSample listen on 8000")
 	http.HandleFunc("/", DefaultRoute)
-	//	h := http.FileServer(http.Dir("./"))
+	http.FileServer(http.Dir("./"))
 	// Bind to a port and pass router in
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }

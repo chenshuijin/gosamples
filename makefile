@@ -15,13 +15,13 @@ else
 	endif
 endif
 
-all: clean test app
-quick: app
+all: clean test build
+#quick: app
 
-app:
-	echo $(GOPATH)
+build:
 	go fmt ./app/...
-	go install ./app/...
+	mkdir -p $(CURDIR)/bin
+	go build -o $(CURDIR)/bin/ ./app/...
 test:
 	go test -v -bench=. ./app/...
 	go test -v -bench=. -cpuprofile=cpu.profile ./app/tunnel

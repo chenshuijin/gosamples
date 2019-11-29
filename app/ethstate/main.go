@@ -1,5 +1,7 @@
 package main
 
+import "log"
+
 /*
 var (
 	app = cli.NewApp()
@@ -8,14 +10,13 @@ var (
 func init() {
 	app.Action = run
 }
+*/
 
 func main() {
 	log.Println("gogo")
-	//	makeConfigNode()
-	//	BlockDb()
-	dbtest()
 }
 
+/*
 func statedbtest() {
 
 }
